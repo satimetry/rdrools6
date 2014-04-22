@@ -1,0 +1,12 @@
+Package: Rdrools6jars
+Version: 0.0.1
+Date: 2013-12-07
+Title: Rdrools6 jars
+Author: SMS Chauhan
+Maintainer: Stefano Picozzi <StefanoPicozzi@gmail.com>
+Description: External jars required for package Rdrools6.
+Imports: rJava (>= 0.6-0)
+Depends: R (>= 2.11.0), rJava (>= 0.6-0)
+SystemRequirements: Java (>= 5.0)
+License:LGPL-3
+LazyLoad: yes

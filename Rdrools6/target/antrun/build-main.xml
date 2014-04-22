@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project name="maven-antrun-" default="main"  >
+<target name="main">
+  <echo>copying the build to Rdrools6..</echo>
+  <copy todir="/Users/stefanopicozzi/TheNudgeMachine/kepler/workspace/Rdrools6/build/Rdrools6/inst/java">
+    <fileset dir="/Users/stefanopicozzi/TheNudgeMachine/kepler/workspace/Rdrools6/target">
+      <include name="*.jar"/>
+    </fileset>
+  </copy>
+  <echo>copying the build to Rdrools6jars..</echo>
+  <copy todir="/Users/stefanopicozzi/TheNudgeMachine/kepler/workspace/Rdrools6/build/Rdrools6jars/inst/java">
+    <fileset dir="/Users/stefanopicozzi/TheNudgeMachine/kepler/workspace/Rdrools6/target">
+      <include name="*.jar"/>
+    </fileset>
+  </copy>
+  <delete>
+    <fileset dir="/Users/stefanopicozzi/TheNudgeMachine/kepler/workspace/Rdrools6/build/Rdrools6jars/inst/java/" includes="junit*"/>
+    <fileset dir="/Users/stefanopicozzi/TheNudgeMachine/kepler/workspace/Rdrools6/build/Rdrools6jars/inst/java/" includes="hamcrest*"/>
+  </delete>
+  <echo>Building the Rdrools6jars package...</echo>
+  <exec dir="/Users/stefanopicozzi/TheNudgeMachine/kepler/workspace/Rdrools6/build" executable="cmd">
+    <arg value="/c"/>
+    <arg value="R CMD build Rdrools6jars"/>
+  </exec>
+  <echo>Building the Rdrools6 package...</echo>
+  <exec dir="/Users/stefanopicozzi/TheNudgeMachine/kepler/workspace/Rdrools6/build" executable="cmd">
+    <arg value="/c"/>
+    <arg value="R CMD build Rdrools6"/>
+  </exec>
+  <echo>Installing the Rdrools6jars package....</echo>
+  <exec dir="/Users/stefanopicozzi/TheNudgeMachine/kepler/workspace/Rdrools6/build" executable="cmd">
+    <arg value="/c"/>
+    <arg value="R CMD INSTALL Rdrools6jars_0.0.1.tar.gz"/>
+  </exec>
+  <echo>Installing the Rdrools6 package....</echo>
+  <exec dir="/Users/stefanopicozzi/TheNudgeMachine/kepler/workspace/Rdrools6/build" executable="cmd">
+    <arg value="/c"/>
+    <arg value="R CMD INSTALL Rdrools6_0.0.1.tar.gz"/>
+  </exec>
+</target>
+</project>

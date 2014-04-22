@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.satimetry</groupId>
+	<artifactId>nudge</artifactId>
+	<version>0.0.1</version>
+	<name>Rdrools6</name>
+	<description>An R package to execute drools6 rules</description>
+
+
+	<build>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<excludes>
+					<exclude>**/*</exclude>
+				</excludes>
+				<filtering>false</filtering>
+			</resource>
+		</resources>
+		<plugins>
+			<!-- Compiler to use -->
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.3.2</version>
+				<configuration>
+					<encoding>UTF-8</encoding>
+					<source>1.6</source>
+					<target>1.6</target>
+				</configuration>
+			</plugin>
+			<!-- Allows cross platform compatibility through UTF-8 -->
+			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>2.5</version>
+				<configuration>
+					<encoding>UTF-8</encoding>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${basedir}/build/Rdrools6jars/inst/java</outputDirectory>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.6</version>
+				<executions>
+					<execution>
+						<id>ant-cleanup</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<tasks>
+								<delete dir="${basedir}/build" />
+								<mkdir dir="${basedir}/build" />
+								<echo>copying the Rdrools6 folder.</echo>
+								<copy todir="${basedir}/build">
+									<fileset dir="${basedir}/src/main/resources" />
+								</copy>
+							</tasks>
+						</configuration>
+					</execution>
+					
+					<execution>
+						<id>ant-build-packages</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<tasks>
+
+								<echo>copying the build to Rdrools6..</echo>
+								<copy todir="${basedir}/build/Rdrools6/inst/java">
+									<fileset dir="${basedir}/target">
+										<include name="*.jar" />
+									</fileset>
+								</copy>
+
+                        <echo>copying the build to Rdrools6jars..</echo>
+                        <copy todir="${basedir}/build/Rdrools6jars/inst/java">
+                           <fileset dir="${basedir}/target">
+                              <include name="*.jar" />
+                           </fileset>
+                        </copy>
+                        
+								<delete>
+									<fileset dir="${basedir}/build/Rdrools6jars/inst/java/"
+										includes="junit*" />
+									<fileset dir="${basedir}/build/Rdrools6jars/inst/java/"
+										includes="hamcrest*" />
+								</delete>
+
+								<echo>Building the Rdrools6jars package...</echo>
+								<exec dir="${basedir}/build" executable="cmd">
+									<arg value="/c" />
+									<arg value="R CMD build Rdrools6jars" />
+								</exec>
+
+								<echo>Building the Rdrools6 package...</echo>
+								<exec dir="${basedir}/build" executable="cmd">
+									<arg value="/c" />
+									<arg value="R CMD build Rdrools6" />
+								</exec>
+
+								<echo>Installing the Rdrools6jars package....</echo>
+								<exec dir="${basedir}/build" executable="cmd">
+									<arg value="/c" />
+									<arg value="R CMD INSTALL Rdrools6jars_0.0.1.tar.gz" />
+								</exec>
+
+								<echo>Installing the Rdrools6 package....</echo>
+								<exec dir="${basedir}/build" executable="cmd">
+									<arg value="/c" />
+									<arg value="R CMD INSTALL Rdrools6_0.0.1.tar.gz" />
+								</exec>
+
+							</tasks>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.10</version>
+				<configuration>
+					<skipTests>true</skipTests>
+				</configuration>
+
+			</plugin>
+		</plugins>
+	</build>
+
+	<dependencies>
+
+		<!-- Internal dependencies -->
+		<dependency>
+			<groupId>org.kie</groupId>
+			<artifactId>kie-api</artifactId>
+			<version>6.0.0.FINAL</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.drools</groupId>
+			<artifactId>drools-core</artifactId>
+			<version>6.0.0.FINAL</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.drools</groupId>
+			<artifactId>drools-compiler</artifactId>
+			<version>6.0.0.FINAL</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.drools</groupId>
+			<artifactId>drools-decisiontables</artifactId>
+			<version>6.0.0.FINAL</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.drools</groupId>
+			<artifactId>drools-templates</artifactId>
+			<version>6.0.0.FINAL</version>
+		</dependency>
+
+		<!-- Needed for logging -->
+		<dependency>
+			<groupId>com.thoughtworks.xstream</groupId>
+			<artifactId>xstream</artifactId>
+			<version>1.4.3</version>
+		</dependency>
+
+		<!-- Logging -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.7.2</version>
+		</dependency>
+
+		<!-- Examples only dependencies. -->
+		<!-- WARNING: every examples only dependency must be properly dealt with 
+			in drools-distribution/src/main/assembly/assembly-drools.xml -->
+		<dependency>
+			<groupId>com.miglayout</groupId>
+			<artifactId>miglayout</artifactId>
+			<version>3.7.4</version>
+		</dependency>
+
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>1.4</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.ostermiller</groupId>
+			<artifactId>utils</artifactId>
+			<version>1.07.00</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.10</version>
+		</dependency>
+
+		<!-- <dependency> -->
+		<!-- <groupId>commons-io</groupId> -->
+		<!-- <artifactId>commons-io</artifactId> -->
+		<!-- <version>2.1</version> -->
+		<!-- </dependency> -->
+		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+			<version>2.6</version>
+		</dependency>
+
+	</dependencies>
+
+
+</project>

@@ -1,0 +1,5 @@
+import("rJava")
+import("Rdrools6jars")
+export("rulesSession")
+export("runRules")
+

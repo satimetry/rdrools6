@@ -1,0 +1,58 @@
+import java.util.HashMap;
+import org.json.JSONObject;
+import com.satimetry.nudge.Output;
+
+// Declare inside drl so we can manipulate objects naturally
+declare ClassStudents
+  @role( event )
+  id : Integer
+  email: String
+  name : String
+  grade : Integer
+  class : String
+end
+
+rule "rulePopulateClassStudents" 
+  salience 1000
+  when
+    $input : JSONObject()
+  then
+    ClassStudents classStudents = new ClassStudents();
+    classStudents.setId( $input.getInt("id") );
+    classStudents.setEmail( $input.getString("email") );
+    classStudents.setName( $input.getString("name") );
+    classStudents.setGrade( $input.getInt("grade") );
+    classStudents.setClass( $input.getString("class") );
+    insert(classStudents);
+    System.out.println("Populate ClassStudents Fired->" + classStudents.getId() + "-" + 
+       classStudents.getName() );
+end
+
+
+rule "rulePopulateOutputs"
+    salience 0
+    when
+        $input : ClassStudents()
+    then
+        JSONObject joutput = new JSONObject();
+        joutput.put( "address", "" + $input.getEmail() );
+        joutput.put( "subject", "Your grade in " + $input.getClass() );
+        joutput.put( "body", "You got a " + $input.getGrade() + " in " + $input.getClass() + ", " + $input.getName() );
+        Output $output = new Output();
+        $output.setOutputMap( joutput.toString() );
+        insert($output);
+        System.out.println("rulePopulateOutputs Fired-->" + $output.getOutputMap());
+end
+
+
+rule "ruleAverageGrade"
+  salience -100
+  no-loop false
+  when
+     $gradeAverage : Number( intValue > 0) from accumulate(
+        ClassStudents( $grade : grade ),
+          average( $grade ) )
+  then
+     System.out.println("Average Grade rule fired->" + $gradeAverage);
+end
+

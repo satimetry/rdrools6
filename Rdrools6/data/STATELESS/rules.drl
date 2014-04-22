@@ -1,0 +1,23 @@
+import java.util.HashMap;
+global java.util.HashMap output;
+
+// These are needed to send output back to R
+declare Output
+  @role( event )
+  outputMap : String
+end;
+
+query "getOutput"
+    $output : Output()
+end;
+
+rule "rule1"
+	salience 0
+	when
+		input : HashMap()
+	then
+		output.put("address", "" + input.get("email"));
+		output.put("subject", "Your grade in " + input.get("class"));
+		output.put("body", "You got a " + input.get("grade") + " in " + input.get("class") + ", " + input.get("name"));
+		System.out.println("rule1 Fired");
+end

@@ -1,0 +1,13 @@
+Package: Rdrools6
+Type: Package
+Title: A rules engine for R based on Drools6
+Version: 0.0.1
+Date: 2013-12-07
+Author: Stefano Picozzi <StefanoPicozzi@gmail.com>,SMS Chauhan <smschauhan@gmail.com>,  Zubin Dowlaty <zubin@dowlaty.com>
+Depends: R (>= 2.11.0), rJava (>= 0.6-0), Rdroolsjars (>= 0.0.1)
+Imports: rJava (>= 0.6-0), Rdroolsjars (>= 0.0.1)
+Maintainer: Stefano Picozzi <StefanoPicozzi@gmail.com>
+Description: Rdrools6 is a rules engine for R based on the popular Java Drools6 engine
+License: LGPL-3
+LazyLoad: yes
+LazyData: yes

@@ -1,0 +1,64 @@
+import java.util.HashMap;
+import org.json.JSONObject;
+import com.satimetry.nudge.Output;
+import java.util.Date;
+import java.text.SimpleDateFormat; 
+
+// Declare inside drl so we can manipulate objects naturally
+declare ClassStudents
+  @role( event )
+  @timestamp( classDate )
+  id : Integer @key
+  classDate: Date 
+  email: String
+  name : String
+  grade : Integer
+  class : String
+end
+
+rule "rulePopulateClassStudents" 
+  salience 1000
+  when
+    $input : JSONObject() from entry-point DEFAULT
+  then
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-M-d");
+    Date date = sdf.parse(  $input.get("classDate").toString() );
+    ClassStudents classStudents = new ClassStudents();
+    classStudents.setId( $input.getInt("id") );
+    classStudents.setClassDate( date );   
+    classStudents.setEmail( $input.getString("email") );
+    classStudents.setName( $input.getString("name") );
+    classStudents.setGrade( $input.getInt("grade") );
+    classStudents.setClass( $input.getString("class") );
+    insert(classStudents);
+    System.out.println("Populate ClassStudents Fired->" + classStudents.getId() + "-" + 
+       classStudents.getName() + "-" + classStudents.getClassDate() );
+end
+
+
+rule "rulePopulateOutputs"
+    salience 0
+    when
+        $input : ClassStudents()
+    then
+        JSONObject joutput = new JSONObject();
+        joutput.put( "address", "" + $input.getEmail() );
+        joutput.put( "subject", "Your grade in " + $input.getClass() );
+        joutput.put( "body", "You got a " + $input.getGrade() + " in " + $input.getClass() + ", " + $input.getName() );
+        Output $output = new Output();
+        $output.setOutputMap( joutput.toString() );
+        insert($output);
+        System.out.println("rulePopulateOutputs Fired-->" + $output.getOutputMap());
+end
+
+// Note that window time is relative to today's system date versus the fact's timestamp
+rule "ruleAverageGrade"
+  salience -100
+  no-loop false
+  when
+     $gradeAve : Number( intValue > 0) from accumulate(
+        ClassStudents( $grade : grade ) over window:time( 3d ),
+          average( $grade ) )
+  then
+     System.out.println("Grade rule fired->" + $gradeAve);
+end
