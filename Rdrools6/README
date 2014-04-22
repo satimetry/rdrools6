@@ -1,2 +1,4 @@
 This is an automated maven project for building Rdrools6. A known issue with Maven will display errors in Eclipse, but that will not affect the build. Please use "clean install" to build the package.
 Both the packages Rdrools6 and Rdrools6jars will be written to the /build directory.
+
+File change test
